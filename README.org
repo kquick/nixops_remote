@@ -25,6 +25,14 @@ $ nix-shell
 #+END_EXAMPLE
 
 ** Configuring a target
+
+One of the advantages of nixops is that the target configuration can
+be specified independently of the target deployment.  The
+configuration is specified by the ~gittter.nix~ file and this file
+does not change, regardless of where the deployment is performed.  The
+deployment instructions are specified by an additional file with the
+deployment-specific details.
+
 *** A local NixOS container
 
 #+BEGIN_EXAMPLE
@@ -45,7 +53,8 @@ AWS_SECRET_ACCESS_KEY = blah_blah_blah
 
 2. Find a good AMI image to use from this page:
    https://nixos.org/nixos/download.html.  Update the gitter-aws.nix
-   file accordingly.
+   file accordingly (if needed; the file already uses a us-west-2 AMI
+   that is current as of now).
 
 3. Ensure your AWS has an "allow_ssh" security group that allows SSH
    inbound for TCP port 22 from source 0.0.0.0/0 (or your local IP
