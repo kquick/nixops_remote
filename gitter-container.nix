@@ -1,0 +1,3 @@
+{
+   gitter = { ... }: { deployment.targetEnv = "container"; };
+}

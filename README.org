@@ -1,0 +1,72 @@
+* Remote nixops execution
+
+This is an example of how nixops can be used to facilitate the easy
+use of (possibly remote) virtual machines for providing an on-demand
+service.
+
+The service can be anything arbitrary: for this example it simply
+prompts for a github repository, checks out the repository, and runs
+the ~wc~ tool on it to count the number of words and lines in the
+repository source.
+
+Using nixops for this makes it easy to change the deployment for this:
+locally as a NixOS container or virtualbox target, and Amazon EC2
+instance, an Azure instance, a Digital Ocean instance, etc.
+
+To experiment with this:
+
+1. git clone and cd to the checked-out code
+2. nix-shell
+
+To create a NixOS container:
+
+3. ~nixops create gitter.nix gitter-container.nix -d gitter-c~
+
+To create an Amazon EC2 instance
+
+4. Ensure your ~$HOME/.aws/credentials~ file exists and has a "dev"
+   section with your keys:
+
+   #+BEGIN_EXAMPLE
+$ cat ~/.aws/credentials
+[dev]
+AWS_ACCESS_KEY_ID = blah
+AWS_SECRET_ACCESS_KEY = blah_blah_blah
+   #+END_EXAMPLE
+
+5. Find a good AMI image to use from this page:
+   https://nixos.org/nixos/download.html.  Update the gitter-aws.nix
+   file accordingly.
+
+6. Ensure your AWS has an "allow_ssh" security group that allows SSH
+   inbound for TCP port 22 from source 0.0.0.0/0 (or your local IP
+   address).  If the name is not "allow_ssh", update the
+   ~gitter-aws.nix~ file with the new name.
+
+7. ~nixops create gitter.nix gitter-aws.nix -d gitter-amazon~
+
+To startup the remote instance, or update it if you change the
+configuration files here:
+
+8. ~nixops deploy -d gitter-amazon~
+
+To run the service:
+
+9. ~nixops ssh -d gitter-amazon gitcounter@gitter
+
+To login to the deployed machine as root:
+
+10. ~nixops ssh -d gitter-amazon gitcounter~
+
+The target will automatically shutdown after 10 minutes, but you can
+shut it down earlier via:
+
+11. ~nixops destroy -d gitter-amazon~
+
+Other useful commands:
+
+#+BEGIN_EXAMPLE
+$ nixops list
+$ nixops info -d gitter-amazon
+$ nixops check -d gitter-amazon
+#+END_EXAMPLE
