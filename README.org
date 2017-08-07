@@ -24,13 +24,14 @@ $ cd nixops_remot
 $ nix-shell
 #+END_EXAMPLE
 
-** To create a NixOS container to run the service:
+** Configuring a target
+*** A local NixOS container
 
 #+BEGIN_EXAMPLE
 $ nixops create gitter.nix gitter-container.nix -d gitter-c~
 #+END_EXAMPLE
 
-** To create an Amazon EC2 instance
+*** An Amazon EC2 instance
 
 1. Ensure your ~$HOME/.aws/credentials~ file exists and has a "dev"
    section with your keys:
@@ -58,12 +59,20 @@ AWS_SECRET_ACCESS_KEY = blah_blah_blah
 $ nixops create gitter.nix gitter-aws.nix -d gitter-amazon
    #+END_EXAMPLE
 
-** To startup the remote instance, or update it if you change the
-configuration files here:
+** Startup the target.
+
+The create above simply created the configuration.  At this point, the
+target instance should be started, using the following command (use
+the name you assigned to the configuration; all further examples will
+use the "gitter-amazon" name):
 
 #+BEGIN_EXAMPLE
 $ nixops deploy -d gitter-amazon
 #+END_EXAMPLE
+
+If any of the local .nix files are changed, simply re-run the deploy
+command to update the target (whether the target is currently running
+or not).
 
 ** To run the service:
 
