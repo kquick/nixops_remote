@@ -11,20 +11,28 @@ repository source.
 
 Using nixops for this makes it easy to change the deployment for this:
 locally as a NixOS container or virtualbox target, and Amazon EC2
-instance, an Azure instance, a Digital Ocean instance, etc.
+instance, an Azure instance, a Digital Ocean instance, etc.  Nixops
+also automatically handles the configuration of the remote system,
+including placing the ssh authorized-keys from your account to allow
+easy SSH login.
 
-To experiment with this:
+** To experiment with this repo:
 
-1. git clone and cd to the checked-out code
-2. nix-shell
+#+BEGIN_EXAMPLE
+$ git clone https://github.com/kquick/nixops_remote
+$ cd nixops_remot
+$ nix-shell
+#+END_EXAMPLE
 
-To create a NixOS container:
+** To create a NixOS container to run the service:
 
-3. ~nixops create gitter.nix gitter-container.nix -d gitter-c~
+#+BEGIN_EXAMPLE
+$ nixops create gitter.nix gitter-container.nix -d gitter-c~
+#+END_EXAMPLE
 
-To create an Amazon EC2 instance
+** To create an Amazon EC2 instance
 
-4. Ensure your ~$HOME/.aws/credentials~ file exists and has a "dev"
+1. Ensure your ~$HOME/.aws/credentials~ file exists and has a "dev"
    section with your keys:
 
    #+BEGIN_EXAMPLE
@@ -34,36 +42,49 @@ AWS_ACCESS_KEY_ID = blah
 AWS_SECRET_ACCESS_KEY = blah_blah_blah
    #+END_EXAMPLE
 
-5. Find a good AMI image to use from this page:
+2. Find a good AMI image to use from this page:
    https://nixos.org/nixos/download.html.  Update the gitter-aws.nix
    file accordingly.
 
-6. Ensure your AWS has an "allow_ssh" security group that allows SSH
+3. Ensure your AWS has an "allow_ssh" security group that allows SSH
    inbound for TCP port 22 from source 0.0.0.0/0 (or your local IP
    address).  If the name is not "allow_ssh", update the
    ~gitter-aws.nix~ file with the new name.
 
-7. ~nixops create gitter.nix gitter-aws.nix -d gitter-amazon~
+4. Create the nixops configuration using the aws credentials and a new
+   name:
 
-To startup the remote instance, or update it if you change the
+   #+BEGIN_EXAMPLE
+$ nixops create gitter.nix gitter-aws.nix -d gitter-amazon
+   #+END_EXAMPLE
+
+** To startup the remote instance, or update it if you change the
 configuration files here:
 
-8. ~nixops deploy -d gitter-amazon~
+#+BEGIN_EXAMPLE
+$ nixops deploy -d gitter-amazon
+#+END_EXAMPLE
 
-To run the service:
+** To run the service:
 
-9. ~nixops ssh -d gitter-amazon gitcounter@gitter
+#+BEGIN_EXAMPLE
+$ nixops ssh -d gitter-amazon gitcounter@gitter
+#+END_EXAMPLE
 
-To login to the deployed machine as root:
+** To login to the deployed machine as root:
 
-10. ~nixops ssh -d gitter-amazon gitcounter~
+#+BEGIN_EXAMPLE
+$ nixops ssh -d gitter-amazon gitcounter
+#+END_EXAMPLE
 
 The target will automatically shutdown after 10 minutes, but you can
 shut it down earlier via:
 
-11. ~nixops destroy -d gitter-amazon~
+#+BEGIN_EXAMPLE
+$ nixops destroy -d gitter-amazon
+#+END_EXAMPLE
 
-Other useful commands:
+** Other useful commands:
 
 #+BEGIN_EXAMPLE
 $ nixops list
